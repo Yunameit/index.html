@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>隱世威記 Wai Kee - 網上點餐系統 Online Ordering</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased font-sans flex flex-col min-h-screen">
+
+    <header class="bg-amber-500 text-white sticky top-0 z-50 shadow-md">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white p-2 rounded-full text-amber-600 shadow-inner">
+                    <i class="fa-solid fa-bowl-food text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-black tracking-wide" data-i18n="shop-name">隱世威記</h1>
+                    <p class="text-xs text-amber-100 font-medium">Wai Kee Tuck Shop</p>
+                </div>
+            </div>
+            
+            <nav class="hidden md:flex space-x-6 font-medium">
+                <a href="#combos" class="hover:text-amber-100 transition" data-i18n="nav-combos">廚師推介</a>
+                <a href="#cart-noodles" class="hover:text-amber-100 transition" data-i18n="nav-cart">車仔麵</a>
+                <a href="#specials" class="hover:text-amber-100 transition" data-i18n="nav-specials">懷舊川味</a>
+                <a href="#snacks" class="hover:text-amber-100 transition" data-i18n="nav-snacks">街頭小食</a>
+            </nav>
+
+            <div class="flex items-center space-x-4">
+                <div class="relative inline-block text-gray-800 text-xs">
+                    <select id="lang-select" onchange="changeLanguage(this.value)" class="bg-white font-bold rounded-lg px-2 py-1.5 focus:outline-none cursor-pointer border border-amber-600">
+                        <option value="zh-HK">繁體中文</option>
+                        <option value="zh-CN">简体中文</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+
+                <button onclick="toggleCartModal()" class="relative bg-amber-600 hover:bg-amber-700 px-4 py-2 rounded-full flex items-center space-x-2 transition cursor-pointer shadow-sm">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="font-bold hidden sm:inline" data-i18n="cart-btn">購物車</span>
+                    <span id="cart-count" class="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <section class="relative bg-cover bg-center h-48 flex items-center" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1552611052-33e04de081de?auto=format&fit=crop&w=1200&q=80');">
+        <div class="max-w-6xl mx-auto px-4 w-full text-white">
+            <span class="bg-red-500 text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider" data-i18n="banner-tag">校園網上點餐專線</span>
+            <h2 class="text-3xl font-extrabold mt-2 shadow-sm" data-i18n="shop-address">長沙灣幸福商場 9 號舖</h2>
+            <div class="flex flex-wrap gap-4 mt-3 text-sm text-gray-200">
+                <span id="info-phone"><i class="fa-solid fa-phone text-amber-400 mr-1"></i> <span data-i18n="info-takeout">外賣自取</span>: 9819 1763</span>
+                <span><i class="fa-solid fa-clock text-amber-400 mr-1"></i> <span data-i18n="info-hours">一至五 08:30 - 23:15</span></span>
+            </div>
+        </div>
+    </section>
+
+    <main class="max-w-6xl mx-auto px-4 py-8 flex-grow grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <div class="lg:col-span-2 space-y-12">
+            
+            <section id="combos" class="scroll-mt-24">
+                <div class="border-l-4 border-amber-500 pl-3 mb-6">
+                    <h3 class="text-2xl font-black text-gray-900" data-i18n="sec-combos-title">🌟 廚師推介 Signature Kombos</h3>
+                    <p class="text-sm text-gray-500 mt-1" data-i18n="sec-combos-subtitle">配固定底：湯米 / 秘製撈麵 / 絲苗白飯</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white p-4 rounded-xl shadow-xs border border-gray-100 flex flex-col justify-between hover:shadow-md transition">
+                        <div>
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-lg text-gray-900" data-i18n="combo-a-name">A. 威記三寶飯/麵</h4>
+                                <span class="text-amber-600 font-extrabold text-lg">$52</span>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1 leading-relaxed" data-i18n="combo-a-desc">包含香茅豬扒、瑞士汁雞翼、鮮甜蘿蔔</p>
+                        </div>
+                        <button onclick="addComboToCart('combo-a-name', 52)" class="mt-4 w-full bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold py-2 rounded-lg transition shadow-sm cursor-pointer" data-i18n="add-to-cart">加入購物車</button>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl shadow-xs border border-gray-100 flex flex-col justify-between hover:shadow-md transition">
+                        <div>
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-lg text-gray-900" data-i18n="combo-b-name">B. 雙拼扒大滿足</h4>
+                                <span class="text-amber-600 font-extrabold text-lg">$48</span>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1 leading-relaxed" data-i18n="combo-b-desc">包含嫩滑雞扒、香茅豬扒，啖啖滋味</p>
+                        </div>
+                        <button onclick="addComboToCart('combo-b-name', 48)" class="mt-4 w-full bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold py-2 rounded-lg transition shadow-sm cursor-pointer" data-i18n="add-to-cart">加入購物車</button>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl shadow-xs border border-gray-100 flex flex-col justify-between hover:shadow-md transition">
+                        <div>
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-lg text-gray-900" data-i18n="combo-c-name">C. 經典手撕雞配香脆豬扒</h4>
+                                <span class="text-amber-600 font-extrabold text-lg">$48</span>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1 leading-relaxed" data-i18n="combo-c-desc">雙重人氣招牌肉類黃金組合</p>
+                        </div>
+                        <button onclick="addComboToCart('combo-c-name', 48)" class="mt-4 w-full bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold py-2 rounded-lg transition shadow-sm cursor-pointer" data-i18n="add-to-cart">加入購物車</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="cart-noodles" class="bg-amber-50/50 p-6 rounded-2xl border border-amber-100 scroll-mt-24">
+                <div class="border-l-4 border-amber-600 pl-3 mb-6">
+                    <h3 class="text-2xl font-black text-gray-900" data-i18n="cart-title">🍜 自選經典車仔麵 Cart Noodles</h3>
+                    <p class="text-sm text-gray-600 mt-1" data-i18n="cart-subtitle">基本消費 $38 任選 3 款配料，追加每款 +$7</p>
+                </div>
+                
+                <form id="cart-noodle-form" class="space-y-6">
+                    <div>
+                        <h4 class="font-bold text-sm uppercase tracking-wider text-amber-800 mb-3" data-i18n="step-1">1. 選擇麵底 (任選一款)</h4>
+                        <div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                            <label class="flex items-center justify-center bg-white border border-gray-200 rounded-lg p-2.5 text-xs font-bold cursor-pointer hover:border-amber-500 has-checked:border-amber-500 has-checked:bg-amber-50">
+                                <input type="radio" name="noodle-base" value="粗麵" checked class="sr-only"> <span data-i18n="n-thick">粗麵</span>
+                            </label>
+                            <label class="flex items-center justify-center bg-white border border-gray-200 rounded-lg p-2.5 text-xs font-bold cursor-pointer hover:border-amber-500 has-checked:border-amber-500 has-checked:bg-amber-50">
+                                <input type="radio" name="noodle-base" value="幼麵" class="sr-only"> <span data-i18n="n-thin">幼麵</span>
+                            </label>
+                            <label class="flex items-center justify-center bg-white border border-gray-200 rounded-lg p-2.5 text-xs font-bold cursor-pointer hover:border-amber-500has-checked:border-amber-500 has-checked:bg-amber-50">
+                                <input type="radio" name="noodle-base" value="米粉" class="sr-only"> <span data-i18n="n-vermicelli">米粉</span>
+                            </label>
+                            <label class="flex items-center justify-center bg-white border border-gray-200 rounded-lg p-2.5 text-xs font-bold cursor-pointer hover:border-amber-500 has-checked:border-amber-500 has-checked:bg-amber-50">
+                                <input type="radio" name="noodle-base" value="油麵" class="sr-only"> <span data-i18n="n-yellow">油麵</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-sm uppercase tracking-wider text-amber-800 mb-3" data-i18n="step-2">2. 選擇醬汁湯底 (任選一款)</h4>
+                        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                            <label class="flex items-center justify-center bg-white border border-gray-200 rounded-lg p-2.5 text-xs font-bold cursor-pointer hover:border-amber-500 has-checked:border-amber-500 has-checked:bg-amber-50">
+                                <input type="radio" name="soup-base" value="清湯" checked class="sr-only"> <span data-i18n="s-broth">清湯</span>
+                            </label>
+                            <label class="flex items-center justify-center bg-white border border-gray-200 rounded-lg p-2.5 text-xs font-bold cursor-pointer hover:border-amber-500 has-checked:border-amber-500 has-checked:bg-amber-50">
+                                <input type="radio" name="soup-base" value="滷水汁" class="sr-only"> <span data-i18n="s-marinade">滷水汁</span>
+                            </label>
+                            <label class="flex items-center justify-center bg-white border border-gray-200 rounded-lg p-2.5 text-xs font-bold cursor-pointer hover:border-amber-500 has-checked:border-amber-500 has-checked:bg-amber-50">
+                                <input type="radio" name="soup-base" value="沙嗲汁" class="sr-only"> <span data-i18n="s-satay">沙嗲汁</span>
+                            </label>
+                            <label class="flex items-center justify-center bg-white border border-gray-200 rounded-lg p-2.5 text-xs font-bold cursor-pointer hover:border-amber-500 has-checked:border-amber-500 has-checked:bg-amber-50">
+                                <input type="radio" name="soup-base" value="咖喱汁" class="sr-only"> <span data-i18n="s-curry">咖喱汁</span>
+                            </label>
+                            <label class="flex items-center justify-center bg-white border border-gray-200 rounded-lg p-2.5 text-xs font-bold cursor-pointer hover:border-amber-500 has-checked:border-amber-500 has-checked:bg-amber-50">
+                                <input type="radio" name="soup-base" value="辣菜譜" class="sr-only"> <span data-i18n="s-chili">辣菜譜</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-sm uppercase tracking-wider text-amber-800 mb-3" data-i18n="step-3">3. 精選配料 (請勾選)</h4>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-60 overflow-y-auto bg-white p-3 rounded-xl border border-gray-200">
+                            <label class="flex items-center space-x-2 text-xs p-1.5 cursor-pointer"><input type="checkbox" name="toppings" value="香茅豬扒" class="rounded text-amber-500 focus:ring-amber-400"><span data-i18n="t-porkchop">香茅豬扒</span></label>
+                            <label class="flex items-center space-x-2 text-xs p-1.5 cursor-pointer"><input type="checkbox" name="toppings" value="嫩滑雞扒" class="rounded text-amber-500 focus:ring-amber-400"><span data-i18n="t-chickenfillet">嫩滑雞扒</span></label>
+                            <label class="flex items-center space-x-2 text-xs p-1.5 cursor-pointer"><input type="checkbox" name="toppings" value="秘製手撕雞" class="rounded text-amber-500 focus:ring-amber-400"><span data-i18n="t-shreddedchicken">秘製手撕雞</span></label>
+                            <label class="flex items-center space-x-2 text-xs p-1.5 cursor-pointer"><input type="checkbox" name="toppings" value="瑞士汁雞翼" class="rounded text-amber-500 focus:ring-amber-400"><span data-i18n="t-swisswing">瑞士汁雞翼</span></label>
+                            <label class="flex items-center space-x-2 text-xs p-1.5 cursor-pointer"><input type="checkbox" name="toppings" value="鮮甜蘿蔔" class="rounded text-amber-500 focus:ring-amber-400"><span data-i18n="t-radish">鮮甜蘿蔔</span></label>
+                            <label class="flex items-center space-x-2 text-xs p-1.5 cursor-pointer"><input type="checkbox" name="toppings" value="惹味豬皮" class="rounded text-amber-500 focus:ring-amber-400"><span data-i18n="t-pigskin">惹味豬皮</span></label>
+                            <label class="flex items-center space-x-2 text-xs p-1.5 cursor-pointer"><input type="checkbox" name="toppings" value="魚蛋" class="rounded text-amber-500 focus:ring-amber-400"><span data-i18n="t-fishball">魚蛋</span></label>
+                            <label class="flex items-center space-x-2 text-xs p-1.5 cursor-pointer"><input type="checkbox" name="toppings" value="燒賣" class="rounded text-amber-500 focus:ring-amber-400"><span data-i18n="t-siumai">燒賣</span></label>
+                            <label class="flex items-center space-x-2 text-xs p-1.5 cursor-pointer"><input type="checkbox" name="toppings" value="墨魚丸" class="rounded text-amber-500 focus:ring-amber-400"><span data-i18n="t-cuttleball">墨魚丸</span></label>
+                            <label class="flex items-center space-x-2 text-xs p-1.5 cursor-pointer"><input type="checkbox" name="toppings" value="牛丸" class="rounded text-amber-500 focus:ring-amber-400"><span data-i18n="t-beefball">牛丸</span></label>
+                            <label class="flex items-center space-x-2 text-xs p-1.5 cursor-pointer"><input type="checkbox" name="toppings" value="龍蝦丸" class="rounded text-amber-500 focus:ring-amber-400"><span data-i18n="t-lobsterball">龍蝦丸</span></label>
+                            <label class="flex items-center space-x-2 text-xs p-1.5 cursor-pointer"><input type="checkbox" name="toppings" value="芝士腸" class="rounded text-amber-500 focus:ring-amber-400"><span data-i18n="t-cheesesausage">芝士腸</span></label>
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="buildCartNoodle()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-xl transition shadow-md cursor-pointer flex justify-center items-center space-x-2">
+                        <i class="fa-solid fa-plus"></i>
+                        <span data-i18n="build-noodle-btn">配置並加入購物車</span>
+                    </button>
+                </form>
+            </section>
+
+            <section id="specials" class="scroll-mt-24">
+                <div class="border-l-4 border-amber-500 pl-3 mb-6">
+                    <h3 class="text-2xl font-black text-gray-900" data-i18n="sec-specials-title">🍲 懷舊及川味專區 Nostalgic & Sichuan</h3>
+                    <p class="text-sm text-gray-500 mt-1" data-i18n="sec-specials-subtitle">威記絕無僅有的極品招牌特色滋味</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center shadow-xs">
+                        <div>
+                            <h4 class="font-bold text-gray-900" data-i18n="spec-a-name">生菜魚肉翅 (三溝)</h4>
+                            <p class="text-xs text-gray-400 mt-0.5" data-i18n="spec-a-desc">經典碗仔翅 + 生菜魚肉完配組合</p>
+                            <span class="text-amber-600 font-extrabold text-sm block mt-2">$28</span>
+                        </div>
+                        <button onclick="addComboToCart('spec-a-name', 28)" class="bg-amber-500 hover:bg-amber-600 text-white p-2 rounded-lg transition shadow-sm cursor-pointer"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center shadow-xs">
+                        <div>
+                            <h4 class="font-bold text-gray-900" data-i18n="spec-b-name">家鄉銀針粉</h4>
+                            <p class="text-xs text-gray-400 mt-0.5" data-i18n="spec-b-desc">香氣濃郁的經典情懷特色粉底</p>
+                            <span class="text-amber-600 font-extrabold text-sm block mt-2">$26</span>
+                        </div>
+                        <button onclick="addComboToCart('spec-b-name', 26)" class="bg-amber-500 hover:bg-amber-600 text-white p-2 rounded-lg transition shadow-sm cursor-pointer"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center shadow-xs">
+                        <div>
+                            <h4 class="font-bold text-gray-900" data-i18n="spec-c-name">正宗酸菜魚 (配飯/米)</h4>
+                            <p class="text-xs text-gray-400 mt-0.5" data-i18n="spec-c-desc">鮮嫩魚片配上濃郁醒胃酸菜湯</p>
+                            <span class="text-amber-600 font-extrabold text-sm block mt-2">$46</span>
+                        </div>
+                        <button onclick="addComboToCart('spec-c-name', 46)" class="bg-amber-500 hover:bg-amber-600 text-white p-2 rounded-lg transition shadow-sm cursor-pointer"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center shadow-xs">
+                        <div>
+                            <h4 class="font-bold text-gray-900" data-i18n="spec-d-name">秘製麻辣鴨血 (配飯/米)</h4>
+                            <p class="text-xs text-gray-400 mt-0.5" data-i18n="spec-d-desc">香辣入味，鴨血滑嫩爽口</p>
+                            <span class="text-amber-600 font-extrabold text-sm block mt-2">$50</span>
+                        </div>
+                        <button onclick="addComboToCart('spec-d-name', 50)" class="bg-amber-500 hover:bg-amber-600 text-white p-2 rounded-lg transition shadow-sm cursor-pointer"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="snacks" class="scroll-mt-24">
+                <div class="border-l-4 border-amber-500 pl-3 mb-6">
+                    <h3 class="text-2xl font-black text-gray-900" data-i18n="sec-snacks-title">🍢 街頭小食 Street Snacks</h3>
+                    <p class="text-sm text-gray-500 mt-1" data-i18n="sec-snacks-subtitle">經典滋味，課後與午間的解饞首選</p>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <div class="bg-white p-3 rounded-xl border border-gray-100 text-center flex flex-col justify-between">
+                        <span class="font-bold text-sm text-gray-900 block" data-i18n="snack-a-name">經典腸粉 (4條)</span>
+                        <span class="text-amber-600 font-extrabold text-xs block mt-1">$10</span>
+                        <button onclick="addComboToCart('snack-a-name', 10)" class="mt-2 w-full bg-gray-100 hover:bg-amber-500 hover:text-white text-gray-700 text-xs py-1.5 rounded-md font-bold transition cursor-pointer" data-i18n="snack-add">添加</button>
+                    </div>
+                    <div class="bg-white p-3 rounded-xl border border-gray-100 text-center flex flex-col justify-between">
+                        <span class="font-bold text-sm text-gray-900 block" data-i18n="snack-b-name">皇牌手撕雞腸粉</span>
+                        <span class="text-amber-600 font-extrabold text-xs block mt-1">$32</span>
+                        <button onclick="addComboToCart('snack-b-name', 32)" class="mt-2 w-full bg-gray-100 hover:bg-amber-500 hover:text-white text-gray-700 text-xs py-1.5 rounded-md font-bold transition cursor-pointer" data-i18n="snack-add">添加</button>
+                    </div>
+                    <div class="bg-white p-3 rounded-xl border border-gray-100 text-center flex flex-col justify-between">
+                        <span class="font-bold text-sm text-gray-900 block" data-i18n="snack-c-name">極品咖喱魚蛋 (8粒)</span>
+                        <span class="text-amber-600 font-extrabold text-xs block mt-1">$10</span>
+                        <button onclick="addComboToCart('snack-c-name', 10)" class="mt-2 w-full bg-gray-100 hover:bg-amber-500 hover:text-white text-gray-700 text-xs py-1.5 rounded-md font-bold transition cursor-pointer" data-i18n="snack-add">添加</button>
+                    </div>
+                    <div class="bg-white p-3 rounded-xl border border-gray-100 text-center flex flex-col justify-between">
+                        <span class="font-bold text-sm text-gray-900 block" data-i18n="snack-d-name">經典蒸燒賣 (8粒)</span>
+                        <span class="text-amber-600 font-extrabold text-xs block mt-1">$10</span>
+                        <button onclick="addComboToCart('snack-d-name', 10)" class="mt-2 w-full bg-gray-100 hover:bg-amber-500 hover:text-white text-gray-700 text-xs py-1.5 rounded-md font-bold transition cursor-pointer" data-i18n="snack-add">添加</button>
+                    </div>
+                    <div class="bg-white p-3 rounded-xl border border-gray-100 text-center flex flex-col justify-between">
+                        <span class="font-bold text-sm text-gray-900 block" data-i18n="snack-e-name">招牌香茅豬扒 (塊)</span>
+                        <span class="text-amber-600 font-extrabold text-xs block mt-1">$21</span>
+                        <button onclick="addComboToCart('snack-e-name', 21)" class="mt-2 w-full bg-gray-100 hover:bg-amber-500 hover:text-white text-gray-700 text-xs py-1.5 rounded-md font-bold transition cursor-pointer" data-i18n="snack-add">添加</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="hidden lg:block">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 sticky top-24 space-y-6">
+                <div class="flex items-center space-x-2 border-b border-gray-100 pb-3">
+                    <i class="fa-solid fa-receipt text-amber-500 text-xl"></i>
+                    <h3 class="text-lg font-black text-gray-900" data-i18n="checkout-panel-title">結賬清單 Order List</h3>
+                </div>
+                
+                <div id="desktop-cart-items" class="space-y-3 max-h-64 overflow-y-auto text-sm text-gray-600">
+                    <p class="text-gray-400 text-center py-4" data-i18n="cart-empty">您的購物車空空如也</p>
+                </div>
+
+                <div class="border-t border-gray-100 pt-4 space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-gray-500" data-i18n="calc-subtotal">小計 Subtotal</span>
+                        <span id="desktop-subtotal" class="font-bold">$0</span>
+                    </div>
+                    <div class="flex justify-between text-base font-black text-gray-900">
+                        <span data-i18n="calc-total">總計 Total</span>
+                        <span id="desktop-total" class="text-amber-600 text-lg">$0</span>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <label class="block text-xs font-bold text-gray-500 uppercase" data-i18n="user-input-label">點餐人姓名 / 班別 Class Name</label>
+                    <input id="user-identity" type="text" placeholder="例: 4A 陳大文 (Tommy)" class="w-full text-sm border border-gray-200 rounded-lg p-2.5 focus:outline-amber-500">
+                </div>
+
+                <button onclick="processCheckout('desktop')" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition shadow-md text-center block cursor-pointer" data-i18n="whatsapp-send-btn">
+                    發送外賣訂單 (WhatsApp)
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-900 text-gray-400 text-xs py-6 mt-12 border-t border-gray-800">
+        <div class="max-w-6xl mx-auto px-4 text-center space-y-2">
+            <p class="font-bold text-gray-300">隱世威記 Wai Kee Tuck Shop &copy; 2026</p>
+            <p data-i18n="footer-credit">學術網頁設計專案作業示範 - 幸福商場地下九號舖</p>
+        </div>
+    </footer>
+
+    <div id="cart-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl p-6 space-y-4 shadow-2xl relative">
+            <button onclick="toggleCartModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-lg cursor-pointer">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-xl font-black text-gray-900 border-b pb-2"><i class="fa-solid fa-cart-shopping text-amber-500 mr-2"></i><span data-i18n="modal-cart-title">購物車明細</span></h3>
+            
+            <div id="modal-cart-items" class="space-y-3 max-h-60 overflow-y-auto text-sm">
+                </div>
+
+            <div class="space-y-2 text-sm border-t pt-3">
+                <div class="flex justify-between font-bold text-gray-900">
+                    <span data-i18n="modal-total-label">總計金額:</span>
+                    <span id="modal-total" class="text-amber-600">$0</span>
+                </div>
+                <input id="modal-user-identity" type="text" placeholder="輸入姓名 / 班別 Class Name" class="w-full text-sm border border-gray-200 rounded-lg p-2.5 focus:outline-amber-500 mt-2">
+            </div>
+
+            <button onclick="processCheckout('modal')" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition text-center block cursor-pointer" data-i18n="whatsapp-send-btn">
+                發送外賣訂單 (WhatsApp)
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const i18n = {
+            "zh-HK": {
+                "shop-name": "隱世威記",
+                "nav-combos": "廚師推介",
+                "nav-cart": "車仔麵",
+                "nav-specials": "懷舊川味",
+                "nav-snacks": "街頭小食",
+                "cart-btn": "購物車",
+                "banner-tag": "校園網上點餐專線",
+                "shop-address": "長沙灣幸福商場 9 號舖",
+                "info-takeout": "外賣自取",
+                "info-hours": "一至五 08:30 - 23:15",
+                "sec-combos-title": "🌟 廚師推介 Signature Kombos",
+                "sec-combos-subtitle": "配固定底：湯米 / 秘製撈麵 / 絲苗白飯",
+                "combo-a-name": "A. 威記三寶飯/麵",
+                "combo-a-desc": "包含香茅豬扒、瑞士汁雞翼、鮮甜蘿蔔",
+                "combo-b-name": "B. 雙拼扒大滿足",
+                "combo-b-desc": "包含嫩滑雞扒、香茅豬扒，啖啖滋味",
+                "combo-c-name": "C. 經典手撕雞配香脆豬扒",
+                "combo-c-desc": "雙重人氣招牌肉類黃金組合",
+                "add-to-cart": "加入購物車",
+                "cart-title": "🍜 自選經典車仔麵 Cart Noodles",
+                "cart-subtitle": "基本消費 $38 任選 3 款配料，追加每款 +$7",
+                "step-1": "1. 選擇麵底 (任選一款)",
+                "n-thick": "粗麵", "n-thin": "幼麵", "n-vermicelli": "米粉", "n-yellow": "油麵",
+                "step-2": "2. 選擇醬汁湯底 (任選一款)",
+                "s-broth": "清湯", "s-marinade": "滷水汁", "s-satay": "沙嗲汁", "s-curry": "咖喱汁", "s-chili": "辣菜譜",
+                "step-3": "3. 精選配料 (請勾選)",
+                "t-porkchop": "香茅豬扒", "t-chickenfillet": "嫩滑雞扒", "t-shreddedchicken": "秘製手撕雞", "t-swisswing": "瑞士汁雞翼",
+                "t-radish": "鮮甜蘿蔔", "t-pigskin": "惹味豬皮", "t-fishball": "魚蛋", "t-siumai": "燒賣",
+                "t-cuttleball": "墨魚丸", "t-beefball": "牛丸", "t-lobsterball": "龍蝦丸", "t-cheesesausage": "芝士腸",
+                "build-noodle-btn": "配置並加入購物車",
+                "sec-specials-title": "🍲 懷舊及川味專區 Nostalgic & Sichuan",
+                "sec-specials-subtitle": "威記絕無僅有的極品招牌特色滋味",
+                "spec-a-name": "生菜魚肉翅 (三溝)",
+                "spec-a-desc": "經典碗仔翅 + 生菜魚肉完配組合",
+                "spec-b-name": "家鄉銀針粉",
+                "spec-b-desc": "香氣濃郁的經典情懷特色粉底",
+                "spec-c-name": "正宗酸菜魚 (配飯/米)",
+                "spec-c-desc": "鮮嫩魚片配上濃郁醒胃酸菜湯",
+                "spec-d-name": "秘製麻辣鴨血 (配飯/米)",
+                "spec-d-desc": "香辣入味，鴨血滑嫩爽口",
+                "sec-snacks-title": "🍢 街頭小食 Street Snacks",
+                "sec-snacks-subtitle": "經典滋味，課後與午間的解饞首選",
+                "snack-a-name": "經典腸粉 (4條)",
+                "snack-b-name": "皇牌手撕雞腸粉",
+                "snack-c-name": "極品咖喱魚蛋 (8粒)",
+                "snack-d-name": "經典蒸燒賣 (8粒)",
+                "snack-e-name": "招牌香茅豬扒 (塊)",
+                "snack-add": "添加",
+                "checkout-panel-title": "結賬清單 Order List",
+                "cart-empty": "您的購物車空空如也",
+                "calc-subtotal": "小計 Subtotal",
+                "calc-total": "總計 Total",
+                "user-input-label": "點餐人姓名 / 班別 Class Name",
+                "whatsapp-send-btn": "發送外賣訂單 (WhatsApp)",
+                "footer-credit": "學術網頁設計專案作業示範 - 幸福商場地下九號舖",
+                "modal-cart-title": "購物車明細",
+                "modal-total-label": "總計金額:"
+            },
+            "zh-CN": {
+                "shop-name": "隐世威记",
+                "nav-combos": "厨师推介",
+                "nav-cart": "车仔面",
+                "nav-specials": "怀旧川味",
+                "nav-snacks": "街头小食",
+                "cart-btn": "购物车",
+                "banner-tag": "校园网上点餐专线",
+                "shop-address": "长沙湾幸福商场 9 号铺",
+                "info-takeout": "外卖自取",
+                "info-hours": "一至五 08:30 - 23:15",
+                "sec-combos-title": "🌟 厨师推介 Signature Kombos",
+                "sec-combos-subtitle": "配固定底：汤米 / 秘制捞面 / 丝苗白饭",
+                "combo-a-name": "A. 威记三宝饭/面",
+                "combo-a-desc": "包含香茅猪扒、瑞士汁鸡翼、鲜甜萝卜",
+                "combo-b-name": "B. 双拼扒大满足",
+                "combo-b-desc": "包含嫩滑鸡扒、香茅猪扒，啖啖滋味",
+                "combo-c-name": "C. 经典手撕鸡配香脆猪扒",
+                "combo-c-desc": "双重人气招牌肉类黄金组合",
+                "add-to-cart": "加入购物车",
+                "cart-title": "🍜 自选经典车仔面 Cart Noodles",
+                "cart-subtitle": "基本消费 $38 任选 3 款配料，追加每款 +$7",
+                "step-1": "1. 选择面底 (任选一款)",
+                "n-thick": "粗面", "n-thin": "幼面", "n-vermicelli": "米粉", "n-yellow": "油面",
+                "step-2": "2. 选择酱汁汤底 (任选一款)",
+                "s-broth": "清汤", "s-marinade": "卤水汁", "s-satay": "沙爹汁", "s-curry": "咖喱汁", "s-chili": "辣菜谱",
+                "step-3": "3. 精选配料 (请勾选)",
+                "t-porkchop": "香茅猪扒", "t-chickenfillet": "嫩滑鸡扒", "t-shreddedchicken": "秘制手撕鸡", "t-swisswing": "瑞士汁鸡翼",
+                "t-radish": "鲜甜萝卜", "t-pigskin": "惹味猪皮", "t-fishball": "鱼蛋", "t-siumai": "烧卖",
+                "t-cuttleball": "墨鱼丸", "t-beefball": "牛丸", "t-lobsterball": "龙虾丸", "t-cheesesausage": "芝士肠",
+                "build-noodle-btn": "配置并加入购物车",
+                "sec-specials-title": "🍲 怀旧及川味专区 Nostalgic & Sichuan",
+                "sec-specials-subtitle": "威记绝无仅有的极品招牌特色滋味",
+                "spec-a-name": "生菜鱼肉翅 (三沟)",
+                "spec-a-desc": "经典碗仔翅 + 生菜鱼肉完配组合",
+                "spec-b-name": "家乡银针粉",
+                "spec-b-desc": "香气浓郁的经典情怀特色粉底",
+                "spec-c-name": "正宗酸菜鱼 (配饭/米)",
+                "spec-c-desc": "鲜嫩鱼片配上浓郁醒胃酸菜汤",
+                "spec-d-name": "秘制麻辣鸭血 (配饭/米)",
+                "spec-d-desc": "香辣入味，鸭血滑嫩爽口",
+                "sec-snacks-title": "🍢 街头小食 Street Snacks",
+                "sec-snacks-subtitle": "经典滋味，课后与午间的解馋首选",
+                "snack-a-name": "经典肠粉 (4条)",
+                "snack-b-name": "皇牌手撕鸡肠粉",
+                "snack-c-name": "极品咖喱鱼蛋 (8粒)",
+                "snack-d-name": "经典蒸烧卖 (8粒)",
+                "snack-e-name": "招牌香茅猪扒 (块)",
+                "snack-add": "添加",
+                "checkout-panel-title": "结账清单 Order List",
+                "cart-empty": "您的购物车空空如也",
+                "calc-subtotal": "小计 Subtotal",
+                "calc-total": "总计 Total",
+                "user-input-label": "点餐人姓名 / 班别 Class Name",
+                "whatsapp-send-btn": "发送外卖订单 (WhatsApp)",
+                "footer-credit": "学术网页设计专案作业示范 - 幸福商场地下九号铺",
+                "modal-cart-title": "购物车明细",
+                "modal-total-label": "总计金额:"
+            },
+            "en": {
+                "shop-name": "Wai Kee",
+                "nav-combos": "Combos",
+                "nav-cart": "Cart Noodles",
+                "nav-specials": "Sichuan & Classics",
+                "nav-snacks": "Snacks",
+                "cart-btn": "Cart",
+                "banner-tag": "Campus Online Ordering Line",
+                "shop-address": "Shop 9, G/F, Fortune Shopping Centre",
+                "info-takeout": "Takeout",
+                "info-hours": "Mon-Fri 08:30 - 23:15",
+                "sec-combos-title": "🌟 Chef's Recommendations (Signature Kombos)",
+                "sec-combos-subtitle": "Served with fixed base: Vermicelli / Tossed Noodles / Rice",
+                "combo-a-name": "A. Wai Kee Trio Meal",
+                "combo-a-desc": "Includes Lemongrass Pork Chop, Swiss Sauce Chicken Wing, Sweet Radish",
+                "combo-b-name": "B. Double Meat Chop Feast",
+                "combo-b-desc": "Includes Juicy Chicken Fillet and Lemongrass Pork Chop",
+                "combo-c-name": "C. Shredded Chicken & Crispy Pork Chop",
+                "combo-c-desc": "Double popular signature protein golden combination",
+                "add-to-cart": "Add to Cart",
+                "cart-title": "🍜 Build Your Own Custom Cart Noodles",
+                "cart-subtitle": "Base Price $38 (Includes 3 Toppings), Additional +$7 each",
+                "step-1": "1. Select Noodle Type (Pick One)",
+                "n-thick": "Thick Noodle", "n-thin": "Thin Noodle", "n-vermicelli": "Vermicelli", "n-yellow": "Yellow Noodle",
+                "step-2": "2. Select Soup/Sauce Base (Pick One)",
+                "s-broth": "Clear Broth", "s-marinade": "Lo Sui Sauce", "s-satay": "Satay Sauce", "s-curry": "Curry Sauce", "s-chili": "Chili Radish Mix",
+                "step-3": "3. Select Toppings (Check fields below)",
+                "t-porkchop": "Lemongrass Pork Chop", "t-chickenfillet": "Chicken Fillet", "t-shreddedchicken": "Shredded Chicken", "t-swisswing": "Swiss Chicken Wing",
+                "t-radish": "Sweet Radish", "t-pigskin": "Pig Skin", "t-fishball": "Fish Balls", "t-siumai": "Siu Mai",
+                "t-cuttleball": "Cuttlefish Balls", "t-beefball": "Beef Balls", "t-lobsterball": "Lobster Balls", "t-cheesesausage": "Cheese Sausages",
+                "build-noodle-btn": "Assemble Noodle & Add to Cart",
+                "sec-specials-title": "🍲 Nostalgic & Sichuan Specialty Line",
+                "sec-specials-subtitle": "Wai Kee exclusive local specialty delicacies",
+                "spec-a-name": "Fake Shark Fin Soup Mix (3-Way Mix)",
+                "spec-a-desc": "Shark Fin Soup + Lettuce & Fish Paste Combo",
+                "spec-b-name": "Nostalgic Silver Pin Noodles",
+                "spec-b-desc": "Aromatic traditional comfort broth noodle soup",
+                "spec-c-name": "Pickled Veg Fish Fillet (with Rice/Vermicelli)",
+                "spec-c-desc": "Tender fish fillet served in savory pickled vegetable broth",
+                "spec-d-name": "Spicy Duck Blood (with Rice/Vermicelli)",
+                "spec-d-desc": "Authentic Sichuan chili marination slide duck blood",
+                "sec-snacks-title": "🍢 Street Snacks Side Orders",
+                "sec-snacks-subtitle": "Authentic local tastes, best choice for snacking",
+                "snack-a-name": "Steamed Rice Roll (4 Pcs)",
+                "snack-b-name": "Signature Shredded Chicken Rice Roll",
+                "snack-c-name": "Curry Fish Balls (8 Pcs)",
+                "snack-d-name": "Steamed Siu Mai Dumplings (8 Pcs)",
+                "snack-e-name": "Lemongrass Pork Chop (1 Pc)",
+                "snack-add": "Add",
+                "checkout-panel-title": "Checkout Checklist Order List",
+                "cart-empty": "Your cart is empty",
+                "calc-subtotal": "Subtotal",
+                "calc-total": "Total",
+                "user-input-label": "Customer Name / School Class Name",
+                "whatsapp-send-btn": "Send Order Out (Via WhatsApp)",
+                "footer-credit": "Academic Web Design Assignment Project Demonstration - Shop 9, G/F, Fortune Shopping Centre",
+                "modal-cart-title": "Shopping Cart Details",
+                "modal-total-label": "Total Amount due:"
+            }
+        };
+
+        let currentLang = "zh-HK";
+        let cart = [];
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll("[data-i18n]").forEach(element => {
+                const translationKey = element.getAttribute("data-i18n");
+                if (i18n[lang] && i18n[lang][translationKey]) {
+                    element.innerText = i18n[lang][translationKey];
+                }
+            });
+            updateCartUI();
+        }
+
+        function getTranslation(key) {
+            return i18n[currentLang][key] || key;
+        }
+
+        function updateCartUI() {
+            const countElements = document.getElementById('cart-count');
+            const desktopContainer = document.getElementById('desktop-cart-items');
+            const modalContainer = document.getElementById('modal-cart-items');
+            
+            const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            countElements.innerText = totalCount;
+
+            let itemsHtml = '';
+            if(cart.length === 0) {
+                itemsHtml = `<p class="text-gray-400 text-center py-4">${getTranslation('cart-empty')}</p>`;
+            } else {
+                cart.forEach((item, index) => {
+                    itemsHtml += `
+                        <div class="flex justify-between items-start bg-gray-50 p-2.5 rounded-lg border border-gray-100">
+                            <div class="pr-2">
+                                <span class="font-bold text-gray-900 block">${item.displayName}</span>
+                                <span class="text-xs text-gray-400">${item.details || ''}</span>
+                            </div>
+                            <div class="text-right flex-shrink-0">
+                                <span class="font-extrabold text-amber-600 block">$${item.price * item.quantity}</span>
+                                <button onclick="removeItem(${index})" class="text-xs text-red-400 hover:text-red-600 mt-1 cursor-pointer"><i class="fa-solid fa-trash-can"></i> ${currentLang === 'en' ? 'Remove' : '移除'}</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            desktopContainer.innerHTML = itemsHtml;
+            modalContainer.innerHTML = itemsHtml;
+
+            document.getElementById('desktop-subtotal').innerText = `$${totalPrice}`;
+            document.getElementById('desktop-total').innerText = `$${totalPrice}`;
+            document.getElementById('modal-total').innerText = `$${totalPrice}`;
+        }
+
+        function addComboToCart(translationKey, price) {
+            const resolvedName = i18n[currentLang][translationKey];
+            const existingIndex = cart.findIndex(item => item.key === translationKey && !item.details);
+            
+            if (existingIndex > -1) {
+                cart[existingIndex].quantity += 1;
+            } else {
+                cart.push({ key: translationKey, displayName: resolvedName, price, quantity: 1, details: '' });
+            }
+            updateCartUI();
+        }
+
+        function buildCartNoodle() {
+            const form = document.getElementById('cart-noodle-form');
+            const baseInput = form.querySelector('input[name="noodle-base"]:checked');
+            const soupInput = form.querySelector('input[name="soup-base"]:checked');
+            
+            const baseText = baseInput.parentElement.innerText.trim();
+            const soupText = soupInput.parentElement.innerText.trim();
+            
+            const checkedToppings = Array.from(form.querySelectorAll('input[name="toppings"]:checked')).map(el => el.parentElement.innerText.trim());
+            
+            if(checkedToppings.length === 0) {
+                alert(currentLang === 'en' ? 'Please select at least 1 topping!' : '請至少選擇一款車仔麵配料！');
+                return;
+            }
+
+            let price = 38;
+            if(checkedToppings.length > 3) {
+                price += (checkedToppings.length - 3) * 7;
+            }
+
+            const name = currentLang === 'en' ? `Custom Noodle (${checkedToppings.length} Toppings)` : `自選車仔麵 (配料數: ${checkedToppings.length})`;
+            const details = `${baseText} / ${soupText} / ${currentLang === 'en' ? 'Toppings' : '配料'}: ${checkedToppings.join(', ')}`;
+
+            cart.push({ key: 'custom-noodle', displayName: name, price, quantity: 1, details });
+            
+            form.querySelectorAll('input[name="toppings"]:checked').forEach(el => el.checked = false);
+            updateCartUI();
+            alert(currentLang === 'en' ? 'Cart noodle added successfully!' : '自選車仔麵配置成功，已推入購物車！');
+        }
+
+        function removeItem(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function toggleCartModal() {
+            const modal = document.getElementById('cart-modal');
+            modal.classList.toggle('hidden');
+        }
+
+        function processCheckout(platform) {
+            if(cart.length === 0) {
+                alert(currentLang === 'en' ? 'Your cart is empty!' : '購物車還是空的，請挑選喜愛的美食後再結賬！');
+                return;
+            }
+
+            const identityId = platform === 'desktop' ? 'user-identity' : 'modal-user-identity';
+            const identity = document.getElementById(identityId).value.trim();
+
+            if(!identity) {
+                alert(currentLang === 'en' ? 'Please fill in your name and class name!' : '請輸入點餐人姓名及班別以供核對！');
+                return;
+            }
+
+            let message = `*【${getTranslation('shop-name')} Online Order】*\n`;
+            message += `*Customer / Class:* ${identity}\n`;
+            message += `--------------------------------\n`;
+            
+            cart.forEach((item, index) => {
+                message += `${index + 1}. ${item.displayName} ($${item.price})\n`;
+                if(item.details) message += `   _${item.details}_\n`;
+            });
+
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            message += `--------------------------------\n`;
+            message += `*Total Amount:* $${totalPrice}\n\n`;
+            message += currentLang === 'en' ? 'Please prepare exact change upon pickup!' : '請準備足額現金或電子支付取餐！';
+
+            const whatsappUrl = `https://api.whatsapp.com/send?phone=85298191763&text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+    </script>
+</body>
+</html>
